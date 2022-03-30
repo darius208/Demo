@@ -45,11 +45,14 @@ bot.action('verify', ctx => {
 })
 
 bot.on('new_chat_members', async ctx => {
-    console.log("update", ctx.update.message.from);
-    const user = await axios.get(`https://webv2.one88.me/api/v1/user/infor-tele?tele_chat_id=${ctx.update.message.from.id}`)
-    console.log('====== user', user.data.data)
-    const result = await axios.put(`https://webv2.one88.me/api/v1/user/infor-tele/${user.data.data.id}`, {"tele_chat_id": ctx.update.message.new_chat_member.id, "ref_id_by_tele": ctx.update.message.from.id});
-    console.log('====== result', result)
+    const {from, new_chat_member} = ctx.update.message
+    const user = await axios.get(`${process.env.API_USER_URL}infor-tele?tele_chat_id=${from.id}`)
+    const data = {
+        "tele_chat_id": from.id,
+        "ref_id_by_tele": new_chat_member.id
+    }
+    const result = await axios.put(`${process.env.API_USER_URL}infor-tele/${user.data.data.id}`, data);
+    console.log('====== result \n', result.data)
 })
 bot.launch()
 
